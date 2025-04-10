@@ -1,75 +1,263 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Mi Página Web</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Fuente Roboto desde Google Fonts -->
+    <!-- Fuente Roboto -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <!-- FontAwesome (íconos redes sociales) -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
     <!-- Estilos internos -->
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            background-color: #f0f0f0; /* gris claro */
+            background-color: #e6ccff; /* púrpura claro */
             margin: 0;
             font-family: 'Roboto', sans-serif;
         }
 
         nav {
             background-color: #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: none;
+            flex-direction: column;
             text-align: center;
-            padding: 10px;
+            background-color: #444;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100%;
         }
 
-        nav a {
-            color: #fff;
+        .nav-links a {
+            color: white;
             text-decoration: none;
-            margin: 0 15px;
+            padding: 10px;
+            border-top: 1px solid #555;
         }
 
-        #map {
+        .nav-links a.active {
+            background-color: #666;
+            border-radius: 5px;
+        }
+
+        .hamburger {
+            cursor: pointer;
+            display: block;
+        }
+
+        .bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+        }
+
+        .nav-active {
+            display: flex;
+        }
+
+        h1, p {
+            text-align: center;
+        }
+
+        #map, #map-tabasco, #map-veracruz {
             height: 400px;
             width: 80%;
             margin: 20px auto;
             border: 2px solid #444;
         }
-    </style>
 
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        #data-container {
+            width: 80%;
+            margin: auto;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #444;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .social-icons a {
+            color: white;
+            margin: 0 10px;
+            font-size: 24px;
+            text-decoration: none;
+        }
+
+        .social-icons a:hover {
+            color: #1da1f2;
+        }
+
+        @media(min-width: 768px) {
+            .nav-links {
+                display: flex !important;
+                flex-direction: row;
+                position: static;
+                background-color: transparent;
+                width: auto;
+            }
+
+            .nav-links a {
+                border: none;
+                margin: 0 10px;
+            }
+
+            .hamburger {
+                display: none;
+            }
+        }
+
+        section {
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+    </style>
 </head>
 <body>
     <nav>
-        <a href="#">Inicio</a>
-        <a href="#">Blog</a>
+        <div class="logo">Mi Web</div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="#inicio" class="active" onclick="closeMenu()">Inicio</a>
+            <a href="#blog" onclick="closeMenu()">Blog</a>
+            <a href="#servicios" onclick="closeMenu()">Servicios</a>
+            <a href="#galeria" onclick="closeMenu()">Galería</a>
+            <a href="#contacto" onclick="closeMenu()">Contacto</a>
+            <a href="#acerca" onclick="closeMenu()">Acerca de</a>
+        </div>
     </nav>
 
-    <h1>Imágenes no Encontradas</h1>
-    <p id="imagenes-no-encontradas"></p>
+    <section id="inicio">
+        <h1>Imágenes no Encontradas</h1>
+        <p id="imagenes-no-encontradas">Aquí se mostrará un mensaje si no hay imágenes disponibles.</p>
+    </section>
+
+    <section id="blog">
+        <h2>Blog</h2>
+        <p>Contenido del blog próximamente.</p>
+    </section>
+
+    <section id="servicios">
+        <h2>Servicios</h2>
+        <p>Lista de servicios ofrecidos.</p>
+    </section>
+
+    <section id="galeria">
+        <h2>Galería</h2>
+        <p>Galería de imágenes próximamente.</p>
+    </section>
+
+    <section id="contacto">
+        <h2>Contacto</h2>
+        <p>Formulario o información de contacto.</p>
+    </section>
+
+    <section id="acerca">
+        <h2>Acerca de</h2>
+        <p>Información sobre esta página o autor.</p>
+    </section>
 
     <div id="data-container"></div>
 
-    <!-- Tu script -->
-    <script src="script.js"></script>
-
-    <!-- Mapa (al final) -->
     <div id="map"></div>
+
+    <!-- Sección con los nuevos mapas -->
+    <section id="mapas-secundarios">
+        <h2 style="text-align:center;">Otros Mapas</h2>
+
+        <div id="map-tabasco" style="height: 400px; width: 80%; margin: 20px auto; border: 2px solid #444;"></div>
+        <div id="map-veracruz" style="height: 400px; width: 80%; margin: 20px auto; border: 2px solid #444;"></div>
+    </section>
+
+    <footer>
+        <p>© 2025 Mi Página Web</p>
+        <div class="social-icons">
+            <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+    </footer>
+
+    <!-- Script externo -->
+    <script src="script.js"></script>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <script>
-        // Coordenadas de Puebla
-        var mapa = L.map('map').setView([19.0413, -98.2062], 8);
+        function toggleMenu() {
+            var navLinks = document.getElementById("navLinks");
+            navLinks.classList.toggle("nav-active");
+        }
 
+        function closeMenu() {
+            var navLinks = document.getElementById("navLinks");
+            if (window.innerWidth < 768) {
+                navLinks.classList.remove("nav-active");
+            }
+        }
+
+        // Mapa Puebla
+        var mapa = L.map('map').setView([19.0413, -98.2062], 8);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(mapa);
-
         L.marker([19.0413, -98.2062]).addTo(mapa)
             .bindPopup('Estado de Puebla')
             .openPopup();
+
+        // Mapa Tabasco
+        var mapTabasco = L.map('map-tabasco').setView([17.9895, -92.9475], 8);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(mapTabasco);
+        L.marker([17.9895, -92.9475]).addTo(mapTabasco)
+            .bindPopup('Estado de Tabasco');
+
+        // Mapa Veracruz
+        var mapVeracruz = L.map('map-veracruz').setView([19.1738, -96.1342], 8);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(mapVeracruz);
+        L.marker([19.1738, -96.1342]).addTo(mapVeracruz)
+            .bindPopup('Estado de Veracruz');
     </script>
 </body>
 </html>
